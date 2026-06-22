@@ -40,8 +40,12 @@
 		"strict": true,
 
 		/* Skip type checking all .d.ts files. */
-		"skipLibCheck": true
+		"skipLibCheck": true,
+		"baseUrl": ".",
+		"paths": {
+			"@/*": ["scripts/ghc/src/*"]
+		}
 	},
 	"exclude": ["test"],
-	"include": ["worker-configuration.d.ts", "src/**/*.ts"]
+	"include": ["worker-configuration.d.ts", "src/**/*.ts", "scripts/**/*.ts"]
 }

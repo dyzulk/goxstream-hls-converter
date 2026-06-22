@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  transcoder:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - GOX_R2_INTERNAL_HOST=r2.internal
+      - GOX_R2_MOCK_RESOLVE_TARGET=host.docker.internal:3000
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

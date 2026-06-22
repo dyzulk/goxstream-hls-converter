@@ -1,0 +1,7 @@
+{
+  "name": "goxstream/php-native",
+  "description": "PHP native video converter runner",
+  "require": {
+    "workerman/workerman": "^4.1.15"
+  }
+}

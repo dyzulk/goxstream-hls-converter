@@ -1,0 +1,13 @@
+{
+  "name": "node-native",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --env-file=.env server.js",
+    "build": "echo \"No JS compilation required for Node native.\"",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}

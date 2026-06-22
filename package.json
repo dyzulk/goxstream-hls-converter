@@ -1,34 +1,31 @@
 {
-  "name": "containers-template",
-  "description": "Build a Container-enabled Worker",
-  "cloudflare": {
-    "label": "Containers Starter",
-    "products": [
-      "Workers",
-      "Durable Objects",
-      "Containers"
-    ],
-    "categories": [],
-    "docs_url": "https://developers.cloudflare.com/containers/",
-    "preview_image_url": "https://imagedelivery.net/_yJ02hpOMj_EnGvsU2aygw/5aba1fb7-b937-46fd-fa67-138221082200/public",
-    "icon_urls": [
-      "https://imagedelivery.net/wSMYJvS3Xw-n339CbDyDIA/5ca0ca32-e897-4699-d4c1-6b680512f000/public"
-    ]
-  },
-  "dependencies": {
-    "@cloudflare/containers": "0.0.30",
-    "hono": "4.11.1"
-  },
-  "devDependencies": {
-    "@types/node": "^26.0.0",
-    "typescript": "5.9.3",
-    "wrangler": "^4.103.0"
-  },
+  "name": "goxstream-hls-converter-root",
   "private": true,
   "scripts": {
-    "cf-typegen": "wrangler types",
-    "deploy": "wrangler deploy",
-    "dev": "wrangler dev",
-    "start": "wrangler dev"
+    "manage": "npx tsx scripts/ghc/src/index.ts",
+    "dev:cf-container": "npx tsx scripts/ghc/src/index.ts dev cf-container",
+    "dev:go-native": "npx tsx scripts/ghc/src/index.ts dev go-native",
+    "dev:node-native": "npx tsx scripts/ghc/src/index.ts dev node-native",
+    "dev:php-native": "npx tsx scripts/ghc/src/index.ts dev php-native",
+    "dev:docker-native": "npx tsx scripts/ghc/src/index.ts dev docker-native",
+    "build:cf-container": "npx tsx scripts/ghc/src/index.ts build cf-container",
+    "build:go-native": "npx tsx scripts/ghc/src/index.ts build go-native",
+    "build:node-native": "npx tsx scripts/ghc/src/index.ts build node-native",
+    "build:docker-native": "npx tsx scripts/ghc/src/index.ts build docker-native",
+    "start:cf-container": "npx tsx scripts/ghc/src/index.ts start cf-container",
+    "start:go-native": "npx tsx scripts/ghc/src/index.ts start go-native",
+    "start:node-native": "npx tsx scripts/ghc/src/index.ts start node-native",
+    "start:php-native": "npx tsx scripts/ghc/src/index.ts start php-native",
+    "start:docker-native": "npx tsx scripts/ghc/src/index.ts start docker-native",
+    "deploy:cf-container": "pnpm --filter cf-container deploy"
+  },
+  "devDependencies": {
+    "@clack/prompts": "^1.6.0",
+    "@types/adm-zip": "^0.5.8",
+    "@types/node": "^26.0.0",
+    "adm-zip": "^0.5.17",
+    "commander": "^15.0.0",
+    "tsx": "^4.22.4",
+    "typescript": "5.9.3"
   }
 }

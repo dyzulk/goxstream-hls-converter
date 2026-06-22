@@ -1,0 +1,21 @@
+{
+  "name": "cf-container",
+  "private": true,
+  "scripts": {
+    "cf-typegen": "wrangler types",
+    "build": "wrangler deploy --dry-run",
+    "typecheck": "tsc --noEmit",
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "start": "wrangler dev"
+  },
+  "dependencies": {
+    "@cloudflare/containers": "0.0.30",
+    "hono": "4.11.1"
+  },
+  "devDependencies": {
+    "@types/node": "^26.0.0",
+    "typescript": "5.9.3",
+    "wrangler": "^4.103.0"
+  }
+}
