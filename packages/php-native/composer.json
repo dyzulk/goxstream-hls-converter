@@ -3,5 +3,10 @@
   "description": "PHP native video converter runner",
   "require": {
     "workerman/workerman": "^4.1.15"
+  },
+  "autoload": {
+    "psr-4": {
+      "Ghc\\PhpNative\\": "src/"
+    }
   }
 }

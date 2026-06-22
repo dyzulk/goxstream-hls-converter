@@ -1,5 +1,9 @@
 <?php
 
+require_once dirname(__DIR__) . "/vendor/autoload.php";
+
+use Ghc\PhpNative\JobState;
+
 header("Content-Type: application/json");
 
 // Simple router for PHP built-in server
@@ -24,15 +28,8 @@ if ($uri === "/transcode" && $_SERVER["REQUEST_METHOD"] === "POST") {
         exit;
     }
 
-    // Save initial state to file
-    $stateFile = sys_get_temp_dir() . "/job_{$jobId}.json";
-    $initialState = [
-        "job_id" => $jobId,
-        "status" => "processing",
-        "progress" => 0.0,
-        "error" => null
-    ];
-    file_put_contents($stateFile, json_encode($initialState));
+    // Save initial state
+    JobState::update($jobId, "processing", 0.0);
 
     // Spawn background transcoding process in a cross-platform way
     $cmd = "php " . escapeshellarg(dirname(__DIR__) . "/transcode.php") . " " . escapeshellarg($jobId) . " " . escapeshellarg($inputKey) . " " . escapeshellarg($outputPrefix);
