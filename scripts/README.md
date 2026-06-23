@@ -48,7 +48,7 @@ The utility operates in two modes depending on how it is invoked:
 |---------|-------------|----------------|
 | `check` | Validates if compiler/run tools are installed on host path | N/A |
 | `install` | Automatically installs root pnpm packages and composer vendor packages | N/A |
-| `dev [runner]` | Starts the selected package in hot-reload or local dev server mode | `cf-container`, `go-native`, `node-native`, `php-native`, `docker-native` |
+| `dev [runner]` | Starts the selected package in hot-reload or local dev server mode | `cf-container`, `go-native`, `node-native`, `php-native`, `php-laravel`, `docker-native` |
 | `build [runner]` | Compiles packages or builds local Docker containers | `cf-container`, `go-native`, `node-native`, `docker-native` |
 | `start [runner]` | Runs compiled binaries or detached production containers | `cf-container`, `go-native`, `node-native`, `php-native`, `docker-native` |
 

@@ -7,9 +7,9 @@ import (
 )
 
 type TranscodeRequest struct {
-	JobID        string `json:"job_id"`
-	InputKey     string `json:"input_key"`
-	OutputPrefix string `json:"output_prefix"`
+	JobID           string `json:"job_id"`
+	InputURL        string `json:"input_url"`
+	UploadURLPrefix string `json:"upload_url_prefix"`
 }
 
 // HandleTranscode menangani request HTTP POST untuk memulai transcode asinkron
@@ -25,8 +25,8 @@ func HandleTranscode(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if req.JobID == "" || req.InputKey == "" || req.OutputPrefix == "" {
-		http.Error(w, "job_id, input_key, and output_prefix are required", http.StatusBadRequest)
+	if req.JobID == "" || req.InputURL == "" || req.UploadURLPrefix == "" {
+		http.Error(w, "job_id, input_url, and upload_url_prefix are required", http.StatusBadRequest)
 		return
 	}
 
@@ -34,7 +34,7 @@ func HandleTranscode(w http.ResponseWriter, r *http.Request) {
 	job := getOrCreateJob(req.JobID)
 
 	// Jalankan transcoding secara asinkron di background goroutine
-	go runTranscoding(req.JobID, req.InputKey, req.OutputPrefix, job)
+	go runTranscoding(req.JobID, req.InputURL, req.UploadURLPrefix, job)
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{

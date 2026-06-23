@@ -14,7 +14,7 @@ import (
 )
 
 // runTranscoding mendownload, mentranscode, dan mengunggah video ke R2 internal
-func runTranscoding(jobID, inputKey, outputPrefix string, job *JobState) {
+func runTranscoding(jobID, inputURL, uploadURLPrefix string, job *JobState) {
 	tempDir := filepath.Join("/tmp", "job-"+jobID)
 	if err := os.MkdirAll(tempDir, 0755); err != nil {
 		updateJobError(job, fmt.Errorf("failed to create temp dir: %v", err))
@@ -24,9 +24,9 @@ func runTranscoding(jobID, inputKey, outputPrefix string, job *JobState) {
 
 	inputPath := filepath.Join(tempDir, "input.mp4")
 
-	// 1. Download file dari R2 internal via Outbound Handler
-	log.Printf("[%s] Downloading raw video: %s", jobID, inputKey)
-	if err := downloadFile("http://r2.internal/"+inputKey, inputPath); err != nil {
+	// 1. Download file dari inputURL
+	log.Printf("[%s] Downloading raw video from: %s", jobID, inputURL)
+	if err := downloadFile(inputURL, inputPath); err != nil {
 		updateJobError(job, fmt.Errorf("failed to download source: %v", err))
 		return
 	}
@@ -55,7 +55,11 @@ func runTranscoding(jobID, inputKey, outputPrefix string, job *JobState) {
 
 	// 3. Jalankan ffmpeg untuk konversi HLS multi-quality
 	log.Printf("[%s] Starting ffmpeg transcoding for duration: %.2f sec", jobID, duration)
-	cmd := exec.Command("ffmpeg",
+	ffmpegCmd := os.Getenv("GOX_FFMPEG_PATH")
+	if ffmpegCmd == "" {
+		ffmpegCmd = "ffmpeg"
+	}
+	cmd := exec.Command(ffmpegCmd,
 		"-i", inputPath,
 		"-filter_complex", "[0:v]split=4[v1][v2][v3][v4]; [v1]scale=-2:1080[v1out]; [v2]scale=-2:720[v2out]; [v3]scale=-2:480[v3out]; [v4]scale=-2:360[v4out]",
 		"-map", "[v1out]", "-map", "0:a", "-c:v:0", "libx264", "-b:v:0", "5000k", "-maxrate:v:0", "5350k", "-bufsize:v:0", "7500k", "-c:a:0", "aac", "-b:a:0", "192k",
@@ -136,8 +140,8 @@ func runTranscoding(jobID, inputKey, outputPrefix string, job *JobState) {
 		_ = os.WriteFile(masterPath, []byte(content), 0644)
 	}
 
-	// 4. Upload file-file HLS ke R2 internal via Outbound Handler
-	log.Printf("[%s] Uploading transcoded HLS files to: %s", jobID, outputPrefix)
+	// 4. Upload file-file HLS ke uploadURLPrefix
+	log.Printf("[%s] Uploading transcoded HLS files", jobID)
 	err = filepath.Walk(outputDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -150,11 +154,11 @@ func runTranscoding(jobID, inputKey, outputPrefix string, job *JobState) {
 		if err != nil {
 			return err
 		}
-		// Standarisasi pemisah path menjadi '/' untuk R2
+		// Standarisasi pemisah path menjadi '/'
 		relPath = filepath.ToSlash(relPath)
-		r2DestURL := fmt.Sprintf("http://r2.internal/%s/%s", outputPrefix, relPath)
+		uploadURL := fmt.Sprintf("%s/%s", strings.TrimSuffix(uploadURLPrefix, "/"), relPath)
 
-		return uploadFile(path, r2DestURL)
+		return uploadFile(path, uploadURL)
 	})
 
 	if err != nil {
@@ -167,7 +171,11 @@ func runTranscoding(jobID, inputKey, outputPrefix string, job *JobState) {
 
 // getVideoDuration mengambil durasi video dalam detik menggunakan ffprobe
 func getVideoDuration(path string) (float64, error) {
-	cmd := exec.Command("ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", path)
+	ffprobeCmd := os.Getenv("GOX_FFPROBE_PATH")
+	if ffprobeCmd == "" {
+		ffprobeCmd = "ffprobe"
+	}
+	cmd := exec.Command(ffprobeCmd, "-v", "error", "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", path)
 	var out bytes.Buffer
 	cmd.Stdout = &out
 	if err := cmd.Run(); err != nil {
