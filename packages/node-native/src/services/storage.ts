@@ -1,9 +1,13 @@
 import http from 'http';
+import https from 'https';
 import fs from 'fs';
 
-export function downloadFile(url: string, destPath: string): Promise<void> {
+export function downloadFile(urlStr: string, destPath: string): Promise<void> {
   return new Promise((resolve, reject) => {
-    http.get(url, (res) => {
+    const url = new URL(urlStr);
+    const client = url.protocol === 'https:' ? https : http;
+
+    client.get(urlStr, (res) => {
       if (res.statusCode !== 200) {
         reject(new Error(`Failed to download: status code ${res.statusCode}`));
         return;
@@ -19,8 +23,10 @@ export function downloadFile(url: string, destPath: string): Promise<void> {
   });
 }
 
-export function uploadFile(localPath: string, r2URL: string): Promise<void> {
+export function uploadFile(localPath: string, uploadUrl: string): Promise<void> {
   return new Promise((resolve, reject) => {
+    const url = new URL(uploadUrl);
+    const client = url.protocol === 'https:' ? https : http;
     const fileStream = fs.createReadStream(localPath);
     const stats = fs.statSync(localPath);
     
@@ -31,10 +37,9 @@ export function uploadFile(localPath: string, r2URL: string): Promise<void> {
       contentType = 'video/MP2T';
     }
 
-    const url = new URL(r2URL);
-    const req = http.request({
+    const req = client.request({
       hostname: url.hostname,
-      port: url.port,
+      port: url.port || (url.protocol === 'https:' ? 443 : 80),
       path: url.pathname + url.search,
       method: 'PUT',
       headers: {
@@ -55,3 +60,4 @@ export function uploadFile(localPath: string, r2URL: string): Promise<void> {
     fileStream.pipe(req);
   });
 }
+

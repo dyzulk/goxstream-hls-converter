@@ -29,11 +29,10 @@ export function parseDurationToSeconds(tStr: string): number {
 
 export async function runTranscoding(
   jobId: string,
-  inputKey: string,
-  outputPrefix: string,
+  inputUrl: string,
+  uploadUrlPrefix: string,
   job: JobState
 ): Promise<void> {
-  const internalHost = process.env.GOX_R2_INTERNAL_HOST || 'r2.internal';
   const tempDir = path.join(os.tmpdir(), 'job-' + jobId);
   fs.mkdirSync(tempDir, { recursive: true });
 
@@ -43,8 +42,8 @@ export async function runTranscoding(
 
   try {
     // 1. Download
-    console.log(`[${jobId}] Downloading raw video: ${inputKey}`);
-    await downloadFile(`http://${internalHost}/${inputKey}`, inputPath);
+    console.log(`[${jobId}] Downloading raw video from: ${inputUrl}`);
+    await downloadFile(inputUrl, inputPath);
 
     // 2. Duration check
     const duration = await getVideoDuration(inputPath);
@@ -118,8 +117,8 @@ export async function runTranscoding(
       fs.writeFileSync(masterPath, masterData, 'utf8');
     }
 
-    // 4. Upload HLS segments and playlists back to R2
-    console.log(`[${jobId}] Uploading generated files to R2`);
+    // 4. Upload HLS segments and playlists back to NextJS
+    console.log(`[${jobId}] Uploading generated files`);
     const walkDir = async (currentPath: string) => {
       const files = fs.readdirSync(currentPath);
       for (const file of files) {
@@ -128,8 +127,8 @@ export async function runTranscoding(
           await walkDir(fullPath);
         } else {
           const relPath = path.relative(outputDir, fullPath).replace(/\\/g, '/');
-          const r2Url = `http://${internalHost}/${outputPrefix}/${relPath}`;
-          await uploadFile(fullPath, r2Url);
+          const uploadUrl = `${uploadUrlPrefix}/${relPath}`;
+          await uploadFile(fullPath, uploadUrl);
         }
       }
     };

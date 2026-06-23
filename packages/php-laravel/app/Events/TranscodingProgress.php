@@ -37,7 +37,7 @@ class TranscodingProgress implements ShouldBroadcast
      */
     public function broadcastAs(): string
     {
-        return "progress";
+        return 'progress';
     }
 
     /**
@@ -48,10 +48,10 @@ class TranscodingProgress implements ShouldBroadcast
     public function broadcastWith(): array
     {
         return [
-            "job_id" => $this->jobId,
-            "status" => $this->status,
-            "progress" => $this->progress,
-            "error" => $this->error
+            'job_id' => $this->jobId,
+            'status' => $this->status,
+            'progress' => $this->progress,
+            'error' => $this->error,
         ];
     }
 }

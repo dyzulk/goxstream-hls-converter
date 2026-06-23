@@ -7,15 +7,15 @@ if (php_sapi_name() !== "cli") {
 require_once __DIR__ . "/vendor/autoload.php";
 
 use Ghc\PhpNative\Config;
-use Ghc\PhpNative\R2Client;
+use Ghc\PhpNative\StorageClient;
 use Ghc\PhpNative\JobState;
 use Ghc\PhpNative\Transcoder;
 
 $jobId = $argv[1] ?? "";
-$inputKey = $argv[2] ?? "";
-$outputPrefix = $argv[3] ?? "";
+$inputUrl = $argv[2] ?? "";
+$uploadUrlPrefix = $argv[3] ?? "";
 
-if (!$jobId || !$inputKey || !$outputPrefix) {
+if (!$jobId || !$inputUrl || !$uploadUrlPrefix) {
     die("Missing arguments\n");
 }
 
@@ -31,12 +31,12 @@ $outputDir = $tempDir . "/hls";
 try {
     JobState::update($jobId, "processing", 0.0);
 
-    $r2Client = new R2Client();
+    $storageClient = new StorageClient();
     $transcoder = new Transcoder();
 
     // 1. Download source video
-    if (!$r2Client->download($inputKey, $inputPath)) {
-        throw new Exception("Failed to download source file from R2");
+    if (!$storageClient->download($inputUrl, $inputPath)) {
+        throw new Exception("Failed to download source file from URL");
     }
 
     // 2. Transcode and report progress
@@ -44,7 +44,7 @@ try {
         JobState::update($jobId, "processing", $progress);
     });
 
-    // 3. Upload generated files back to R2
+    // 3. Upload generated files
     $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($outputDir));
     foreach ($iterator as $file) {
         if ($file->isDir()) {
@@ -53,9 +53,9 @@ try {
         $filePath = $file->getPathname();
         $relPath = str_replace("\\", "/", substr($filePath, strlen($outputDir) + 1));
         
-        $r2Key = "{$outputPrefix}/{$relPath}";
-        if (!$r2Client->upload($r2Key, $filePath)) {
-            throw new Exception("Failed to upload output file to R2: {$relPath}");
+        $uploadUrl = "{$uploadUrlPrefix}/{$relPath}";
+        if (!$storageClient->upload($uploadUrl, $filePath)) {
+            throw new Exception("Failed to upload output file: {$relPath}");
         }
     }
 
@@ -76,3 +76,4 @@ try {
         @rmdir($tempDir);
     }
 }
+

@@ -35,11 +35,6 @@ return [
         ],
     ],
 
-    'r2' => [
-        'internal_host' => env('GOX_R2_INTERNAL_HOST', 'r2.internal'),
-        'mock_resolve_target' => env('GOX_R2_MOCK_RESOLVE_TARGET', '127.0.0.1:3000'),
-    ],
-
     'transcoder' => [
         'ffmpeg_path' => env('GOX_FFMPEG_PATH', 'ffmpeg'),
         'ffprobe_path' => env('GOX_FFPROBE_PATH', 'ffprobe'),

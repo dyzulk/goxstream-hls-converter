@@ -19,12 +19,12 @@ if ($uri === "/transcode" && $_SERVER["REQUEST_METHOD"] === "POST") {
     $data = json_decode($body, true);
 
     $jobId = $data["job_id"] ?? "";
-    $inputKey = $data["input_key"] ?? "";
-    $outputPrefix = $data["output_prefix"] ?? "";
+    $inputUrl = $data["input_url"] ?? "";
+    $uploadUrlPrefix = $data["upload_url_prefix"] ?? "";
 
-    if (!$jobId || !$inputKey || !$outputPrefix) {
+    if (!$jobId || !$inputUrl || !$uploadUrlPrefix) {
         http_response_code(400);
-        echo json_encode(["error" => "job_id, input_key, and output_prefix are required"]);
+        echo json_encode(["error" => "job_id, input_url, and upload_url_prefix are required"]);
         exit;
     }
 
@@ -32,7 +32,7 @@ if ($uri === "/transcode" && $_SERVER["REQUEST_METHOD"] === "POST") {
     JobState::update($jobId, "processing", 0.0);
 
     // Spawn background transcoding process in a cross-platform way
-    $cmd = "php " . escapeshellarg(dirname(__DIR__) . "/transcode.php") . " " . escapeshellarg($jobId) . " " . escapeshellarg($inputKey) . " " . escapeshellarg($outputPrefix);
+    $cmd = "php " . escapeshellarg(dirname(__DIR__) . "/transcode.php") . " " . escapeshellarg($jobId) . " " . escapeshellarg($inputUrl) . " " . escapeshellarg($uploadUrlPrefix);
     
     if (strncasecmp(PHP_OS, "WIN", 3) === 0) {
         pclose(popen("start /B " . $cmd, "r"));

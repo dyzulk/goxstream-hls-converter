@@ -14,7 +14,7 @@ import (
 )
 
 // runTranscoding mendownload, mentranscode, dan mengunggah video ke R2 internal
-func runTranscoding(jobID, inputKey, outputPrefix string, job *JobState) {
+func runTranscoding(jobID, inputURL, uploadURLPrefix string, job *JobState) {
 	tempDir := filepath.Join("/tmp", "job-"+jobID)
 	if err := os.MkdirAll(tempDir, 0755); err != nil {
 		updateJobError(job, fmt.Errorf("failed to create temp dir: %v", err))
@@ -24,9 +24,9 @@ func runTranscoding(jobID, inputKey, outputPrefix string, job *JobState) {
 
 	inputPath := filepath.Join(tempDir, "input.mp4")
 
-	// 1. Download file dari R2 internal via Outbound Handler
-	log.Printf("[%s] Downloading raw video: %s", jobID, inputKey)
-	if err := downloadFile("http://r2.internal/"+inputKey, inputPath); err != nil {
+	// 1. Download file dari inputURL
+	log.Printf("[%s] Downloading raw video from: %s", jobID, inputURL)
+	if err := downloadFile(inputURL, inputPath); err != nil {
 		updateJobError(job, fmt.Errorf("failed to download source: %v", err))
 		return
 	}
@@ -140,8 +140,8 @@ func runTranscoding(jobID, inputKey, outputPrefix string, job *JobState) {
 		_ = os.WriteFile(masterPath, []byte(content), 0644)
 	}
 
-	// 4. Upload file-file HLS ke R2 internal via Outbound Handler
-	log.Printf("[%s] Uploading transcoded HLS files to: %s", jobID, outputPrefix)
+	// 4. Upload file-file HLS ke uploadURLPrefix
+	log.Printf("[%s] Uploading transcoded HLS files", jobID)
 	err = filepath.Walk(outputDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -154,11 +154,11 @@ func runTranscoding(jobID, inputKey, outputPrefix string, job *JobState) {
 		if err != nil {
 			return err
 		}
-		// Standarisasi pemisah path menjadi '/' untuk R2
+		// Standarisasi pemisah path menjadi '/'
 		relPath = filepath.ToSlash(relPath)
-		r2DestURL := fmt.Sprintf("http://r2.internal/%s/%s", outputPrefix, relPath)
+		uploadURL := fmt.Sprintf("%s/%s", strings.TrimSuffix(uploadURLPrefix, "/"), relPath)
 
-		return uploadFile(path, r2DestURL)
+		return uploadFile(path, uploadURL)
 	})
 
 	if err != nil {

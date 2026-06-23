@@ -3,7 +3,6 @@ import { Hono } from "hono";
 
 interface Env {
   GOXSTREAM_CONTAINER: DurableObjectNamespace<GoxstreamContainer>;
-  ANIME_BUCKET: R2Bucket;
 }
 
 export class GoxstreamContainer extends Container<Env> {
@@ -22,31 +21,6 @@ export class GoxstreamContainer extends Container<Env> {
     console.log("Goxstream Container error:", error);
   }
 }
-
-// @ts-ignore
-GoxstreamContainer.outboundByHost = {
-  "r2.internal": async (request: Request, env: Env) => {
-    const url = new URL(request.url);
-    const key = decodeURIComponent(url.pathname.slice(1));
-    
-    if (request.method === "GET") {
-      const object = await env.ANIME_BUCKET.get(key);
-      if (!object) return new Response("Not Found", { status: 404 });
-      return new Response(object.body, {
-        headers: { "Content-Type": object.httpMetadata?.contentType || "application/octet-stream" }
-      });
-    }
-    
-    if (request.method === "PUT") {
-      await env.ANIME_BUCKET.put(key, request.body, {
-        httpMetadata: { contentType: request.headers.get("content-type") || "application/octet-stream" }
-      });
-      return new Response("OK", { status: 200 });
-    }
-    
-    return new Response("Method Not Allowed", { status: 405 });
-  }
-};
 
 const app = new Hono<{ Bindings: Env }>();
 

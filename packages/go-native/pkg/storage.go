@@ -30,8 +30,8 @@ func downloadFile(url, destPath string) error {
 	return err
 }
 
-// uploadFile mengunggah berkas lokal menggunakan HTTP PUT ke R2 internal
-func uploadFile(localPath, r2URL string) error {
+// uploadFile mengunggah berkas lokal menggunakan HTTP PUT ke URL tujuan
+func uploadFile(localPath, uploadURL string) error {
 	file, err := os.Open(localPath)
 	if err != nil {
 		return err
@@ -43,7 +43,7 @@ func uploadFile(localPath, r2URL string) error {
 		return err
 	}
 
-	req, err := http.NewRequest(http.MethodPut, r2URL, file)
+	req, err := http.NewRequest(http.MethodPut, uploadURL, file)
 	if err != nil {
 		return err
 	}

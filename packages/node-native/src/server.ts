@@ -1,13 +1,9 @@
 import http from 'http';
-import { initializeSpoof } from './utils/spoof.js';
 import { getOrCreateJob } from './services/jobs.js';
 import { runTranscoding } from './services/transcoder.js';
 import { handleUpgrade } from './ws/gateway.js';
 
-// 1. Initialize Network Spoofing
-initializeSpoof();
-
-// 2. HTTP Server Creation
+// HTTP Server Creation
 const server = http.createServer((req, res) => {
   const host = req.headers.host || 'localhost';
   const url = new URL(req.url || '', `http://${host}`);
@@ -24,17 +20,17 @@ const server = http.createServer((req, res) => {
     req.on('end', () => {
       try {
         const payload = JSON.parse(body);
-        const { job_id, input_key, output_prefix } = payload;
+        const { job_id, input_url, upload_url_prefix } = payload;
         
-        if (!job_id || !input_key || !output_prefix) {
+        if (!job_id || !input_url || !upload_url_prefix) {
           res.writeHead(400, { 'Content-Type': 'text/plain' });
-          res.end('job_id, input_key, and output_prefix are required');
+          res.end('job_id, input_url, and upload_url_prefix are required');
           return;
         }
 
         const job = getOrCreateJob(job_id);
         // Execute background transcode
-        runTranscoding(job_id, input_key, output_prefix, job);
+        runTranscoding(job_id, input_url, upload_url_prefix, job);
 
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ status: 'processing', job_id }));
@@ -50,13 +46,14 @@ const server = http.createServer((req, res) => {
   res.end('Not Found');
 });
 
-// 3. Delegate WebSocket Upgrade
+// Delegate WebSocket Upgrade
 server.on('upgrade', (request, socket, head) => {
   handleUpgrade(request, socket, head);
 });
 
-// 4. Listen
+// Listen
 const port = process.env.PORT || 8080;
 server.listen(port, () => {
   console.log(`Goxstream Node Native Server (TypeScript) listening on :${port}`);
 });
+

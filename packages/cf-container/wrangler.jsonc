@@ -24,12 +24,7 @@
 			}
 		]
 	},
-	"r2_buckets": [
-		{
-			"binding": "ANIME_BUCKET",
-			"bucket_name": "goxstream-anime-media"
-		}
-	],
+
 	"migrations": [
 		{
 			"new_sqlite_classes": [
