@@ -1,5 +1,13 @@
 {
 	"files.associations": {
 		"wrangler.json": "jsonc"
+	},
+	"files.exclude": {
+		"**/.ai": true,
+		"**/.agents": true
+	},
+	"search.exclude": {
+		"**/.ai": true,
+		"**/.agents": true
 	}
 }

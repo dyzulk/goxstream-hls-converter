@@ -14,6 +14,7 @@
         "inertia-react-development",
         "tailwindcss-development",
         "echo-react-development",
-        "echo-development"
+        "echo-development",
+        "laravel-api"
     ]
 }

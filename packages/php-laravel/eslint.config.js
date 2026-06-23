@@ -104,6 +104,10 @@ export default [
     },
     {
         ignores: [
+            '.ai',
+            '.ai/**',
+            '.agents',
+            '.agents/**',
             'vendor',
             'node_modules',
             'public',
