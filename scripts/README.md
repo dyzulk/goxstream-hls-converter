@@ -67,4 +67,4 @@ To run the utility seamlessly without typing verbose Node commands, two launcher
 
 ## TypeScript Path Aliasing
 
-This module is fully type-safe. To make development and refactoring cleaner, all internal imports use the `@/` path prefix (e.g., `import { runCheck } from '@/commands/check'`). This is resolved by the `tsx` runtime dynamically using the `paths` and `baseUrl` mapping defined inside the root [tsconfig.json](file:///c:/Users/dyzulk/Documents/goxstream/goxstream-hls-converter/tsconfig.json).
+This module is fully type-safe. To make development and refactoring cleaner, all internal imports use the `@/` path prefix (e.g., `import { runCheck } from '@/commands/check'`). This is resolved by the `tsx` runtime dynamically using the `paths` and `baseUrl` mapping defined inside the root [tsconfig.json](../tsconfig.json).

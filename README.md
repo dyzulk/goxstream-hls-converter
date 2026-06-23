@@ -83,17 +83,17 @@ All transcoder runners conform to a single unified payload interface.
 
 The workspace supports multiple runner environments depending on resource availability and deployment preferences:
 
-* **[packages/cf-container](file:///c:/Users/dyzulk/Documents/goxstream/goxstream-hls-converter/packages/cf-container)**:
+* **[packages/cf-container](./packages/cf-container/README.md)**:
   Cloudflare Workers Containers-based worker launcher. It receives triggers from queues and dispatches requests to individual container instances.
-* **[packages/php-laravel](file:///c:/Users/dyzulk/Documents/goxstream/goxstream-hls-converter/packages/php-laravel)**:
+* **[packages/php-laravel](./packages/php-laravel/README.md)**:
   Laravel 13 Framework runner with built-in Artisan commands, Pest test suites, and Reverb websocket broadcasting.
-* **[packages/php-native](file:///c:/Users/dyzulk/Documents/goxstream/goxstream-hls-converter/packages/php-native)**:
+* **[packages/php-native](./packages/php-native/README.md)**:
   Lightweight native PHP runner with a built-in HTTP server router and CLI background process runner.
-* **[packages/node-native](file:///c:/Users/dyzulk/Documents/goxstream/goxstream-hls-converter/packages/node-native)**:
+* **[packages/node-native](./packages/node-native/README.md)**:
   TypeScript Node.js runner using native HTTP/HTTPS modules for download/upload streaming and a built-in WebSocket gateway.
-* **[packages/go-native](file:///c:/Users/dyzulk/Documents/goxstream/goxstream-hls-converter/packages/go-native)**:
+* **[packages/go-native](./packages/go-native/README.md)**:
   Go-based high-performance runner using native net/http packages and concurrent goroutines.
-* **[packages/docker-native](file:///c:/Users/dyzulk/Documents/goxstream/goxstream-hls-converter/packages/docker-native)**:
+* **[packages/docker-native](./packages/docker-native/README.md)**:
   Dockerized environment wrapping local transcoder runtime scripts.
 
 ---
@@ -115,4 +115,4 @@ A unified developer-friendly command-line tool `ghc` is available at the workspa
   ./ghc dev [go-native | node-native | php-native | php-laravel | cf-container | docker-native]
   ```
 
-For more details on CLI operations, refer to the [scripts README](file:///c:/Users/dyzulk/Documents/goxstream/goxstream-hls-converter/scripts/README.md).
+For more details on CLI operations, refer to the [scripts README](./scripts/README.md).
