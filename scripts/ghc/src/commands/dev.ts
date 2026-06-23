@@ -17,6 +17,7 @@ const RUNNERS: RunnerConfig[] = [
   { value: 'go-native', label: 'Go Native Runner (go-native)', cmd: 'go', args: ['run', 'main.go'], dir: 'packages/go-native', reqs: ['go'] },
   { value: 'node-native', label: 'Node.js Native Runner (node-native)', cmd: 'pnpm', args: ['--filter', 'node-native', 'dev'], reqs: ['node'] },
   { value: 'php-native', label: 'PHP Native Runner (php-native)', cmd: 'php', args: ['-S', 'localhost:8080', '-t', 'public'], dir: 'packages/php-native', reqs: ['php'] },
+  { value: 'php-laravel', label: 'PHP Laravel Runner (php-laravel)', cmd: 'composer', args: ['dev'], dir: 'packages/php-laravel', reqs: ['php', 'composer'] },
   { value: 'docker-native', label: 'Docker Native Runner (docker-native)', cmd: 'docker', args: ['compose', 'up'], dir: 'packages/docker-native', reqs: ['docker'] }
 ];
 

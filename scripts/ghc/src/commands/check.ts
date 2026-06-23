@@ -6,8 +6,8 @@ export async function runCheck(): Promise<boolean> {
     { name: 'Node.js', command: 'node', required: true },
     { name: 'pnpm', command: 'pnpm', required: true },
     { name: 'Go', command: 'go', required: false, purpose: 'Required for go-native and cf-container' },
-    { name: 'PHP', command: 'php', required: false, purpose: 'Required for php-native' },
-    { name: 'Composer', command: 'composer', required: false, purpose: 'Required for php-native' },
+    { name: 'PHP', command: 'php', required: false, purpose: 'Required for php-native and php-laravel' },
+    { name: 'Composer', command: 'composer', required: false, purpose: 'Required for php-native and php-laravel' },
     { name: 'FFmpeg', command: 'ffmpeg', required: false, purpose: 'Required for local transcoding runners' },
     { name: 'Docker', command: 'docker', required: false, purpose: 'Required for docker-native' }
   ];

@@ -5,6 +5,8 @@ use App\Http\Controllers\Teams\TeamInvitationController;
 use App\Http\Middleware\EnsureTeamMembership;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\TranscodeController;
+
 Route::inertia('/', 'welcome')->name('home');
 
 Route::prefix('{current_team}')
@@ -17,5 +19,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('invitations/{invitation}/accept', [TeamInvitationController::class, 'accept'])->name('invitations.accept');
     Route::delete('invitations/{invitation}', [TeamInvitationController::class, 'decline'])->name('invitations.decline');
 });
+
+Route::get('/health', [TranscodeController::class, 'health']);
+Route::post('/transcode', [TranscodeController::class, 'transcode']);
 
 require __DIR__.'/settings.php';
